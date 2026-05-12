@@ -3,10 +3,10 @@ import sql from "mssql";
 
 // -------- DB CONFIG --------
 const dbConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
+  user: "db_a88f53_oeebapi_admin",
+  password: "Pankaj_Kumar036",
+  server: "sql5075.site4now.net",
+  database: "db_a88f53_oeebapi",
   options: {
     encrypt: false,
     trustServerCertificate: true

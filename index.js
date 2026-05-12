@@ -65,9 +65,18 @@ async function generateLinks() {
       html += `<h3>Subcategory: ${subId}</h3>`;
 
       for (const country of countries) {
-        const url = `https://www.eventbrite.com/d/${country}/all-events/?subcategories=${subId}`;
-        html += `<a href="${url}" target="_blank">${url}</a>`;
-      }
+  for (let page = 1; page <= 51; page++) {
+
+    const url =
+      `https://www.eventbrite.com/d/${country}/all-events/?subcategories=${subId}&page=${page}`;
+
+    html += `
+      <a href="${url}" target="_blank" rel="noopener noreferrer">
+        ${country} | Sub ${subId} | Page ${page}
+      </a>
+    `;
+  }
+}
     }
 
     html += "</body></html>";

@@ -1,12 +1,12 @@
-import fs from "fs";
 import sql from "mssql";
+import http from "http";
 
 // -------- DB CONFIG --------
 const dbConfig = {
-  user: "db_a88f53_oeebapi_admin",
-  password: "Pankaj_Kumar036",
-  server: "sql5075.site4now.net",
-  database: "db_a88f53_oeebapi",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_NAME,
   options: {
     encrypt: false,
     trustServerCertificate: true
@@ -39,7 +39,7 @@ async function getSubcategoryIds(pool) {
   return result.recordset.map(row => String(row.id));
 }
 
-// -------- MAIN --------
+// -------- GENERATE HTML --------
 async function generateLinks() {
   try {
     console.log("🔌 Connecting to DB...");
@@ -52,32 +52,48 @@ async function generateLinks() {
     <html>
     <head>
       <title>Eventbrite Links</title>
+      <style>
+        body { font-family: Arial; padding: 20px; }
+        a { display: block; margin: 4px 0; }
+      </style>
     </head>
     <body>
       <h2>Generated Eventbrite Links</h2>
     `;
 
-    for (let subId of subcategories) {
+    for (const subId of subcategories) {
       html += `<h3>Subcategory: ${subId}</h3>`;
 
-      for (let country of countries) {
+      for (const country of countries) {
         const url = `https://www.eventbrite.com/d/${country}/all-events/?subcategories=${subId}`;
-        
-        html += `<a href="${url}" target="_blank">${url}</a><br>`;
+        html += `<a href="${url}" target="_blank">${url}</a>`;
       }
     }
 
     html += "</body></html>";
 
-    fs.writeFileSync("links.html", html);
-
-    console.log("✅ links.html generated successfully");
-
     await pool.close();
+
+    return html;
 
   } catch (err) {
     console.error("❌ Error:", err.message);
+    return `<h1>Error: ${err.message}</h1>`;
   }
 }
 
-generateLinks();
+// -------- HTTP SERVER --------
+const PORT = process.env.PORT || 3000;
+
+http.createServer(async (req, res) => {
+  const html = await generateLinks();
+
+  res.writeHead(200, {
+    "Content-Type": "text/html"
+  });
+
+  res.end(html);
+
+}).listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

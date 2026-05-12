@@ -61,23 +61,17 @@ async function generateLinks() {
       <h2>Generated Eventbrite Links</h2>
     `;
 
-    for (const subId of subcategories) {
-      html += `<h3>Subcategory: ${subId}</h3>`;
+    for (const subId of subcategories.slice(0, 5)) {
+  for (const country of countries.slice(0, 5)) {
+    for (let page = 1; page <= 5; page++) {
 
-      for (const country of countries) {
-  for (let page = 1; page <= 51; page++) {
+      const url =
+        `https://www.eventbrite.com/d/${country}/all-events/?subcategories=${subId}&page=${page}`;
 
-    const url =
-      `https://www.eventbrite.com/d/${country}/all-events/?subcategories=${subId}&page=${page}`;
-
-    html += `
-      <a href="${url}" target="_blank" rel="noopener noreferrer">
-        ${country} | Sub ${subId} | Page ${page}
-      </a>
-    `;
+      html += `<a href="${url}" target="_blank">${url}</a>`;
+    }
   }
 }
-    }
 
     html += "</body></html>";
 
